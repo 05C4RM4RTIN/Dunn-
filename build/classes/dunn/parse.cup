@@ -1,0 +1,79 @@
+package dunn;
+import java_cup.runtime.*;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
+action code{:
+ArrayList <Elementos> data=new ArrayList();
+ArrayList dataset=new ArrayList();
+
+int num_var=0; // numero de varibles
+boolean num_ins=false;
+ public void ImprimeValor(String str){
+  System.out.println("elr del token"+str) ;
+   }
+/*public void agregar(String str){
+  dataset.add(str);
+   }*/
+:}
+parser code{:
+public void syntax_error(Symbol s){
+JOptionPane.showMessageDialog(null,"Error en la linea "+(s.right+1)+" Columna "+s.left+" Identificador "
++s.value+" no reconocido. ");
+
+}
+
+public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
+JOptionPane.showMessageDialog(null,"Error en la linea "+(s.right+1)+" Columna "+s.left+" Identificador "
++s.value+" no reconocido. ");
+}
+    
+:}
+/*DECLARACION DE VARIABLES TERMINALES */
+terminal numeric,p_integer,p_date,p_string,p_data,p_relation,p_attribute,coma,abrep,cierrap,p_real,punto,interrogacion,comilla,cadena,comilla_doble;
+terminal String numero,palabra;
+
+/*Declaracion de variables no terminales*/
+non terminal Estructura,atributos,numericos,nominales,variables,datos,dec_atributos,token,tokens,token1,tokens1,nombr,nombre,varia,variab,comi;
+
+start with Estructura;
+
+Estructura::= p_relation nombre dec_atributos p_data datos;
+
+dec_atributos::= p_attribute atributos;
+dec_atributos::=dec_atributos p_attribute atributos;
+
+nombr::=palabra|numero|comi numero comi|comi palabra comi|cadena;
+nombre::=nombr;
+nombre::=nombr punto nombre;
+
+tokens::=comi token comi|token|palabra:str {:data.add(new Elementos()); 
+data.get(num_var).setNombre(str);
+:}|cadena:str {:data.add(new Elementos());
+str=str.substring(1,str.length()-1);
+data.get(num_var).setNombre(str);
+:};
+
+token::=numero:str {:data.add(new Elementos());
+data.get(num_var).setNombre(str);
+:};
+
+
+atributos::=numericos{:num_var++;:}|nominales{:num_var++;:};
+numericos::=tokens numeric|tokens p_integer|tokens p_real;
+
+nominales::=tokens abrep variables cierrap;
+varia::=numero:str1 {:data.get(num_var).agregarValor(str1);:};
+variab::=comi varia comi|varia|palabra:str {:data.get(num_var).agregarValor(str);:}|cadena:str {:str=str.substring(1,str.length()-1);
+data.get(num_var).agregarValor(str);
+:};
+variables::=variab coma variables;
+variables::=variab;
+
+token1::=numero:str {:dataset.add(str);:}|interrogacion {:dataset.add(0);:};
+tokens1::=comi token1 comi|token1|palabra:str {:dataset.add(str);:}|cadena:str {:str=str.substring(1,str.length()-1);
+dataset.add(str);
+:};
+datos::=tokens1;
+datos::=tokens1 coma datos|tokens1 datos;
+
+comi::=comilla|comilla_doble;

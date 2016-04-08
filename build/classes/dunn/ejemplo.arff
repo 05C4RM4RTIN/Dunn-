@@ -1,0 +1,15 @@
+@relation ejemplo
+@attribute x numeric
+@attribute y {a,e,i,o,u}
+@attribute z {y,n}
+@data 1,u,y
+2,u,n
+8,i,y
+2,o,n
+4,u,y
+4,u,n
+4,o,y
+7,i,n
+2,e,y
+3,e,n
+2,a,y
